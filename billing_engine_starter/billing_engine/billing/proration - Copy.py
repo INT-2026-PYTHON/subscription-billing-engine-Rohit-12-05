@@ -47,42 +47,6 @@ def compute_proration(
     tax_calc: TaxCalculator,
     tax_context: TaxContext,
 ) -> ProrationResult:
-    """Pure function to calculate upgrade/downgrade credits and charges."""
-    
-    # 1. Validation
-    if old_plan_price.currency != new_plan_price.currency:
-        raise ValueError("Cannot prorate across different currencies.")
-        
-    if switch_date < period_start or switch_date > period_end:
-        raise ValueError("Switch date must fall within the current billing period.")
-
-    # 2. Day-count math
-    total_days = (period_end - period_start).days
-    used_days = (switch_date - period_start).days
-    remaining_days = total_days - used_days
-
-    if total_days == 0:
-        ratio = Decimal("0")
-    else:
-        ratio = Decimal(remaining_days) / Decimal(total_days)
-
-    # 3. Base credit and charge amounts (Explicitly rounded to 2 decimal places)
-    credit_dec = round(old_plan_price.amount * ratio, 2)
-    charge_dec = round(new_plan_price.amount * ratio, 2)
-
-    credit_amount = Money(str(credit_dec), old_plan_price.currency)
-    charge_amount = Money(str(charge_dec), new_plan_price.currency)
-
-    # 4. Apply taxes (and round the resulting tax totals)
-    raw_credit_tax = tax_calc.apply(credit_amount, tax_context).total
-    raw_charge_tax = tax_calc.apply(charge_amount, tax_context).total
-    
-    credit_tax = Money(str(round(raw_credit_tax.amount, 2)), raw_credit_tax.currency)
-    charge_tax = Money(str(round(raw_charge_tax.amount, 2)), raw_charge_tax.currency)
-
-    return ProrationResult(
-        credit_amount=credit_amount,
-        charge_amount=charge_amount,
-        credit_tax=credit_tax,
-        charge_tax=charge_tax,
-    )
+    """Pure function. STRETCH — implement only after Days 1+2 are green."""
+    # TODO Day 4
+    raise NotImplementedError("Day 4: implement compute_proration")

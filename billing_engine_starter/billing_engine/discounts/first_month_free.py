@@ -6,11 +6,19 @@ Uses DiscountContext.invoice_count_so_far to decide:
     - >0 => not the first              => discount = 0
 """
 
+"""
+FirstMonthFree — 100% off the very first invoice for a subscription, 0% after.
+"""
+
 from billing_engine.money import Money
 from billing_engine.discounts.base import Discount, DiscountContext
 
 
 class FirstMonthFree(Discount):
     def apply(self, subtotal: Money, context: DiscountContext) -> Money:
-        # TODO Day 1
-        raise NotImplementedError("Day 1: implement FirstMonthFree.apply")
+        if context.invoice_count_so_far == 0:
+            return subtotal
+            
+        # Return a zero amount using the same currency as the subtotal
+        return Money.zero(subtotal.currency)
+    

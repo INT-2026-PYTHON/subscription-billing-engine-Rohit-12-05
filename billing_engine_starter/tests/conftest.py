@@ -34,8 +34,12 @@ def db() -> Database:
     database = Database(path)
     database.init_schema()
     yield database
-    Path(path).unlink(missing_ok=True)
-
+    try:
+        Path(path).unlink(missing_ok=True)
+    except PermissionError:
+        # Windows puts a strict lock on open SQLite files. 
+        # We can safely ignore this; the OS temp folder cleans itself up later.
+        pass
 
 # ----------------------------------------------------------------
 # Bundle of repositories (cuts boilerplate in integration-y tests)
